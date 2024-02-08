@@ -1,20 +1,18 @@
-using System;
 using UnityEngine;
 
 namespace Selectable
 {
-    public class SelectableVisuals: MonoBehaviour
+    public class SelectableVisuals : MonoBehaviour
     {
-        [SerializeField] private Renderer renderer;
+        [SerializeField] private Renderer meshRenderer;
         [SerializeField] private int materialIndex;
-        [SerializeField] private Color secondColor = Color.cyan;
+        [SerializeField] private Color secondColor = Color.green;
         private Material initialMaterial;
         private Color initialColor;
 
-
         private void Awake()
         {
-            initialMaterial = renderer.materials[materialIndex];
+            initialMaterial = meshRenderer.materials[materialIndex];
             initialColor = initialMaterial.color;
         }
 

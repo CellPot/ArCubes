@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 139075935}
   - component: {fileID: 139075934}
   m_Layer: 5
-  m_Name: JoystickHolder
+  m_Name: StickHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -352,8 +352,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d33955e94a12fe42b07617a9318b77a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controllerInteractor: {fileID: 331264286}
-  uiHandler: {fileID: 2099970470}
 --- !u!114 &436358037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,6 +384,7 @@ MonoBehaviour:
   objectsHandler: {fileID: 436358037}
   actionReference: {fileID: -3603844561257126198, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
+  movementSpeed: 1
 --- !u!1 &702413256
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,7 +458,7 @@ GameObject:
   - component: {fileID: 844282578}
   - component: {fileID: 844282577}
   m_Layer: 5
-  m_Name: MoveJoystick
+  m_Name: OnScreenStick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1099,6 +1098,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionHandler: {fileID: 436358036}
   objectsHandler: {fileID: 436358037}
+  controllerInteractor: {fileID: 331264286}
+  uiHandler: {fileID: 2099970470}
 --- !u!4 &1438332861
 Transform:
   m_ObjectHideFlags: 0
@@ -1125,13 +1126,14 @@ GameObject:
   - component: {fileID: 1702964718}
   - component: {fileID: 1702964720}
   - component: {fileID: 1702964719}
+  - component: {fileID: 1702964721}
   m_Layer: 5
-  m_Name: JoystickInputPanel
+  m_Name: StickInputPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1702964718
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1165,7 +1167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1190,6 +1192,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1702964717}
   m_CullTransparentMesh: 1
+--- !u!114 &1702964721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702964717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 023c6ce145d259342bab346c3dcb29ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementStick: {fileID: 844282577}
 --- !u!1 &1745899085
 GameObject:
   m_ObjectHideFlags: 0
@@ -1200,7 +1215,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1745899086}
   m_Layer: 0
-  m_Name: SurfacedObjects
+  m_Name: SurfacedObjectsParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1299,7 +1314,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -1337,7 +1352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4624771c4432239479d325e3193de128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementStick: {fileID: 844282577}
+  stickUI: {fileID: 1702964721}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

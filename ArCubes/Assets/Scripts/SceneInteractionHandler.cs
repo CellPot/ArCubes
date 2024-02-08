@@ -6,18 +6,21 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class SceneInteractionHandler : MonoBehaviour, IARHitProvider
 {
-    public event Action<ARRaycastHit> OnARRaycastHit;
-
-    [SerializeField] private XRBaseControllerInteractor controllerInteractor;
-    [SerializeField] private UIHandler uiHandler;
+    private XRBaseControllerInteractor controllerInteractor;
+    private UIHandler uiHandler;
 
     private IARInteractor arInteractor;
     private bool hasFocusOnSelected;
     private bool selectActivatedOnUI;
 
-    private void Awake()
+    public event Action<ARRaycastHit> OnARRaycastHit;
+
+    public void Initialize(XRBaseControllerInteractor controllerInteractor, IARInteractor arInteractor,
+        UIHandler uiHandler)
     {
-        arInteractor = controllerInteractor as IARInteractor;
+        this.controllerInteractor = controllerInteractor;
+        this.arInteractor = arInteractor;
+        this.uiHandler = uiHandler;
     }
 
     private void Update()

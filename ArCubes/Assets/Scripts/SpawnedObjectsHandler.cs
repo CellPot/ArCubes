@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Selectable;
+using UI;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -11,23 +12,26 @@ public class SpawnedObjectsHandler : MonoBehaviour
     [SerializeField] private bool spawnOnVertical = true;
     [SerializeField] private int initialPoolSize = 15;
 
-    private IARHitProvider _planeHitProvider;
-    private ObjectPool<SelectableObject> _pool;
+    private IARHitProvider planeHitProvider;
+    private UIHandler uiHandler;
+    private ObjectPool<SelectableObject> objectsPool;
     private List<SelectableObject> activeSelectables = new();
 
     public List<SelectableObject> ActiveSelectables => activeSelectables;
 
-    public void Initialize(IARHitProvider hitProvider)
+    public void Initialize(IARHitProvider hitProvider, UIHandler handler)
     {
-        _planeHitProvider = hitProvider;
-        _planeHitProvider.OnARRaycastHit += OnPlaneHitAction;
-        _pool = new ObjectPool<SelectableObject>(() =>
+        planeHitProvider = hitProvider;
+        uiHandler = handler;
+
+        planeHitProvider.OnARRaycastHit += OnPlaneHitAction;
+        objectsPool = new ObjectPool<SelectableObject>(() =>
             SurfacedObjectsFactory.Create(selectablePrefab, parentForSpawned), initialPoolSize);
     }
 
     public void OnDestroy()
     {
-        _planeHitProvider.OnARRaycastHit -= OnPlaneHitAction;
+        planeHitProvider.OnARRaycastHit -= OnPlaneHitAction;
     }
 
     private void OnPlaneHitAction(ARRaycastHit hitInfo)
@@ -37,20 +41,16 @@ public class SpawnedObjectsHandler : MonoBehaviour
             return;
 
         var newObject = GetNewObjectFromPool(hitInfo.pose.position, plane.normal);
+        CheckActiveAmount();
     }
 
     private SelectableObject GetNewObjectFromPool(Vector3 position, Vector3 normal)
     {
-        var newObject = _pool.GetObjectFromPool();
+        var newObject = objectsPool.GetObjectFromPool();
         newObject.gameObject.PresetSelectableActive(position, normal);
-        newObject.OnDeletionTriggered += OnObjectDeletionTriggered;
+        newObject.OnDeletionTriggered += DestroyPoolObject;
         activeSelectables.Add(newObject);
         return newObject;
-    }
-
-    private void OnObjectDeletionTriggered(SelectableObject selectableObject)
-    {
-        DestroyPoolObject(selectableObject);
     }
 
     private void DestroyPoolObject(SelectableObject poolObject)
@@ -59,14 +59,21 @@ public class SpawnedObjectsHandler : MonoBehaviour
         {
             poolObject.gameObject.PresetSelectableNonActive(parentForSpawned);
             poolObject.ResetState();
-            poolObject.OnDeletionTriggered -= OnObjectDeletionTriggered;
-            _pool.ReturnObjectToPool(poolObject);
+            poolObject.OnDeletionTriggered -= DestroyPoolObject;
+            objectsPool.ReturnObjectToPool(poolObject);
             activeSelectables.Remove(poolObject);
         }
         else
         {
             Destroy(poolObject.gameObject);
         }
+
+        CheckActiveAmount();
+    }
+
+    private void CheckActiveAmount()
+    {
+        uiHandler.SetControlsActiveState(activeSelectables.Count > 0);
     }
 
     private static bool IsCorrectTypeOfPlane(ARPlane plane, bool isVerticalAllowed) =>

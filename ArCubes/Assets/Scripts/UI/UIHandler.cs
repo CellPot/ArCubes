@@ -1,19 +1,16 @@
 using UnityEngine;
-using UnityEngine.InputSystem.OnScreen;
 
 namespace UI
 {
     public class UIHandler : MonoBehaviour
     {
-        [SerializeField] private OnScreenStick movementStick;
+        [SerializeField] private StickUI stickUI;
 
-        private RectTransform stickRectTransform;
+        public bool IsInputFocusedOnUI => stickUI.gameObject.activeSelf && stickUI.IsInputFocusedOnElements;
 
-        public bool IsInputFocusedOnUI => stickRectTransform.anchoredPosition != Vector2.zero;
-
-        private void Awake()
+        public void SetControlsActiveState(bool state)
         {
-            stickRectTransform = movementStick.GetComponent<RectTransform>();
+            stickUI.gameObject.SetActive(state);
         }
     }
 }
