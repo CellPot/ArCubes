@@ -1,25 +1,28 @@
 using System.Collections.Generic;
+using Selectable;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
 public class SpawnedObjectsHandler : MonoBehaviour
 {
-    [SerializeField] private GameObject spawnablePrefab;
+    [SerializeField] private SelectableObject selectablePrefab;
     [SerializeField] private Transform parentForSpawned;
     [SerializeField] private bool spawnOnVertical = true;
     [SerializeField] private int initialPoolSize = 15;
-    
+
     private IARHitProvider _planeHitProvider;
-    private ObjectPool<GameObject> _pool;
-    private List<GameObject> spawnedObjects = new ();
+    private ObjectPool<SelectableObject> _pool;
+    private List<SelectableObject> activeSelectables = new();
+
+    public List<SelectableObject> ActiveSelectables => activeSelectables;
 
     public void Initialize(IARHitProvider hitProvider)
     {
         _planeHitProvider = hitProvider;
         _planeHitProvider.OnARRaycastHit += OnPlaneHitAction;
-        _pool = new ObjectPool<GameObject>(() =>
-            SurfacedObjectsFactory.Create(spawnablePrefab, parentForSpawned), initialPoolSize);
+        _pool = new ObjectPool<SelectableObject>(() =>
+            SurfacedObjectsFactory.Create(selectablePrefab, parentForSpawned), initialPoolSize);
     }
 
     public void OnDestroy()
@@ -34,28 +37,28 @@ public class SpawnedObjectsHandler : MonoBehaviour
             return;
 
         var newObject = GetNewObjectFromPool(hitInfo.pose.position, plane.normal);
-        newObject.PresetSelectableActive(hitInfo.pose.position, plane.normal);
+        newObject.gameObject.PresetSelectableActive(hitInfo.pose.position, plane.normal);
     }
 
-    private GameObject GetNewObjectFromPool(Vector3 position, Vector3 normal)
+    private SelectableObject GetNewObjectFromPool(Vector3 position, Vector3 normal)
     {
         var newObject = _pool.GetObjectFromPool();
-        newObject.PresetSelectableActive(position, normal);
-        spawnedObjects.Add(newObject);
+        newObject.gameObject.PresetSelectableActive(position, normal);
+        activeSelectables.Add(newObject);
         return newObject;
     }
 
-    private void DestroyObject(GameObject poolObject)
+    private void DestroyPoolObject(SelectableObject poolObject)
     {
-        if (spawnedObjects.Contains(poolObject))
+        if (activeSelectables.Contains(poolObject))
         {
-            poolObject.PresetSelectableNonActive();
+            poolObject.gameObject.PresetSelectableNonActive();
             _pool.ReturnObjectToPool(poolObject);
-            spawnedObjects.Remove(poolObject);
+            activeSelectables.Remove(poolObject);
         }
         else
         {
-            Destroy(poolObject);
+            Destroy(poolObject.gameObject);
         }
     }
 
