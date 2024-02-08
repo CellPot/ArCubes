@@ -7,6 +7,6 @@ public class MainGameInstaller : MonoBehaviour
 
     private void Awake()
     {
-        objectsHandler.Initialize(interactionHandler, new SurfacedSpawner());
+        objectsHandler.Initialize(interactionHandler);
     }
 }
