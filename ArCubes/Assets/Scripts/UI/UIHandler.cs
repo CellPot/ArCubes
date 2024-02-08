@@ -8,9 +8,14 @@ namespace UI
 
         public bool IsInputFocusedOnUI => stickUI.gameObject.activeSelf && stickUI.IsInputFocusedOnElements;
 
+        private void Awake()
+        {
+            stickUI.SetActiveState(false);
+        }
+
         public void SetControlsActiveState(bool state)
         {
-            stickUI.gameObject.SetActive(state);
+            stickUI.SetActiveState(state);
         }
     }
 }

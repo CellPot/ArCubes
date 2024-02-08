@@ -37,13 +37,12 @@ namespace Selectable.Movement
 
         private void FixedUpdate()
         {
-            if (inputValue != Vector2.zero)
-                MoveObjects();
+            MoveObjects();
         }
 
         private void MoveObjects()
         {
-            var movement = new Vector3(inputValue.x, 0, inputValue.y).normalized * (Time.deltaTime * movementSpeed);
+            var movement = new Vector3(inputValue.x, 0, inputValue.y) * (Time.deltaTime * movementSpeed);
             foreach (var selectable in objectsHandler.ActiveSelectables)
                 selectable.Move(movement);
         }
