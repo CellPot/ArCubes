@@ -11,8 +11,9 @@ public static class SelectableUtility
         newObject.SetActive(true);
     }
 
-    public static void PresetSelectableNonActive(this GameObject newObject)
+    public static void PresetSelectableNonActive(this GameObject newObject, Transform parent)
     {
         newObject.SetActive(false);
+        newObject.transform.SetParent(parent);
     }
 }

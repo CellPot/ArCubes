@@ -7,6 +7,7 @@ namespace Selectable.Movement
     {
         [SerializeField] private SpawnedObjectsHandler objectsHandler;
         [SerializeField] private InputActionReference actionReference;
+        [SerializeField] private float movementSpeed = 1f;
 
         private Vector2 inputValue;
 
@@ -42,7 +43,7 @@ namespace Selectable.Movement
 
         private void MoveObjects()
         {
-            var movement = new Vector3(inputValue.x, 0, inputValue.y).normalized * Time.deltaTime;
+            var movement = new Vector3(inputValue.x, 0, inputValue.y).normalized * (Time.deltaTime * movementSpeed);
             foreach (var selectable in objectsHandler.ActiveSelectables)
                 selectable.Move(movement);
         }

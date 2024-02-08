@@ -37,22 +37,29 @@ public class SpawnedObjectsHandler : MonoBehaviour
             return;
 
         var newObject = GetNewObjectFromPool(hitInfo.pose.position, plane.normal);
-        newObject.gameObject.PresetSelectableActive(hitInfo.pose.position, plane.normal);
     }
 
     private SelectableObject GetNewObjectFromPool(Vector3 position, Vector3 normal)
     {
         var newObject = _pool.GetObjectFromPool();
         newObject.gameObject.PresetSelectableActive(position, normal);
+        newObject.OnDeletionTriggered += OnObjectDeletionTriggered;
         activeSelectables.Add(newObject);
         return newObject;
+    }
+
+    private void OnObjectDeletionTriggered(SelectableObject selectableObject)
+    {
+        DestroyPoolObject(selectableObject);
     }
 
     private void DestroyPoolObject(SelectableObject poolObject)
     {
         if (activeSelectables.Contains(poolObject))
         {
-            poolObject.gameObject.PresetSelectableNonActive();
+            poolObject.gameObject.PresetSelectableNonActive(parentForSpawned);
+            poolObject.ResetState();
+            poolObject.OnDeletionTriggered -= OnObjectDeletionTriggered;
             _pool.ReturnObjectToPool(poolObject);
             activeSelectables.Remove(poolObject);
         }
