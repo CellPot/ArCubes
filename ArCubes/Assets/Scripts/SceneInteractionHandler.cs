@@ -1,4 +1,5 @@
 using System;
+using UI;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -8,9 +9,11 @@ public class SceneInteractionHandler : MonoBehaviour, IARHitProvider
     public event Action<ARRaycastHit> OnARRaycastHit;
 
     [SerializeField] private XRBaseControllerInteractor controllerInteractor;
+    [SerializeField] private UIHandler uiHandler;
 
     private IARInteractor arInteractor;
     private bool hasFocusOnSelected;
+    private bool selectActivatedOnUI;
 
     private void Awake()
     {
@@ -27,16 +30,23 @@ public class SceneInteractionHandler : MonoBehaviour, IARHitProvider
         }
     }
 
-
     private bool GetSpawnConditionCompliance()
     {
         var shouldSpawn = false;
         if (IsSelectActivatedThisFrame())
+        {
             hasFocusOnSelected = IsSelectionPresent();
+            selectActivatedOnUI = uiHandler.IsInputFocusedOnUI;
+        }
         else if (IsSelectActionActive())
+        {
             hasFocusOnSelected = hasFocusOnSelected || IsSelectionPresent();
+        }
         else if (IsSelectDeactivatedThisFrame())
-            shouldSpawn = !IsSelectionPresent() && !hasFocusOnSelected;
+        {
+            shouldSpawn = !IsSelectionPresent() && !hasFocusOnSelected && !selectActivatedOnUI;
+            selectActivatedOnUI = false;
+        }
 
         return shouldSpawn;
     }
