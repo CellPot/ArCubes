@@ -3,9 +3,10 @@ using UnityEngine;
 public class MainGameInstaller : MonoBehaviour
 {
     [SerializeField] private SceneInteractionHandler interactionHandler;
+    [SerializeField] private SpawnedObjectsHandler objectsHandler;
 
     private void Awake()
     {
-        var objectsHandler = new SelectableObjectsHandler(interactionHandler);
+        objectsHandler.Initialize(interactionHandler, new SurfacedSpawner());
     }
 }

@@ -1,15 +1,13 @@
 using System;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
-using UnityEngine.XR.ARSubsystems;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class SceneInteractionHandler : MonoBehaviour, IPlaneHitProvider
+public class SceneInteractionHandler : MonoBehaviour, IARHitProvider
 {
-    public event Action<ARPlane> OnPlaneRaycastHit;
+    public event Action<ARRaycastHit> OnARRaycastHit;
 
     [SerializeField] private XRBaseControllerInteractor controllerInteractor;
-    [SerializeField] private bool spawnOnlyOnHorizontalUp;
 
     private IARInteractor arInteractor;
     private bool hasFocusOnSelected;
@@ -25,15 +23,7 @@ public class SceneInteractionHandler : MonoBehaviour, IPlaneHitProvider
 
         if (spawnConditionsMet && arInteractor.TryGetCurrentARRaycastHit(out var raycastHit))
         {
-            var plane = raycastHit.trackable as ARPlane;
-            if (plane == null)
-                return;
-            OnPlaneRaycastHit?.Invoke(plane);
-            if (!IsCorrectTypeOfPlane(plane))
-                return;
-
-            Debug.Log("SPAWN");
-            // m_ObjectSpawner.TrySpawnObject(arRaycastHit.pose.position, arPlane.normal);
+            OnARRaycastHit?.Invoke(raycastHit);
         }
     }
 
@@ -51,9 +41,6 @@ public class SceneInteractionHandler : MonoBehaviour, IPlaneHitProvider
         return shouldSpawn;
     }
 
-    private bool IsCorrectTypeOfPlane(ARPlane plane) =>
-        !spawnOnlyOnHorizontalUp || plane.alignment == PlaneAlignment.HorizontalUp;
-
     private bool IsSelectActionActive() =>
         controllerInteractor.xrController.currentControllerState.selectInteractionState.active;
 
@@ -67,7 +54,8 @@ public class SceneInteractionHandler : MonoBehaviour, IPlaneHitProvider
         controllerInteractor.hasSelection;
 }
 
-public interface IPlaneHitProvider
+
+public interface IARHitProvider
 {
-    event Action<ARPlane> OnPlaneRaycastHit;
+    event Action<ARRaycastHit> OnARRaycastHit;
 }
