@@ -1,47 +1,61 @@
 using System.Collections;
-using Network;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using Web;
 
 namespace Tracking
 {
     public class TrackingHandler : MonoBehaviour
     {
         [SerializeField] private ARTrackedImageManager manager;
-        [SerializeField] private ImageProvider provider;
         [SerializeField] private GameObject prefab;
 
         private void Awake()
         {
             StartCoroutine(nameof(ImgLoadingRoutine));
-            provider.OnTextureLoaded += OnLoaded;
+        }
+
+        private void OnEnable()
+        {
+            manager.trackedImagesChanged += OnImagesChanged;
+        }
+
+        private void OnDisable()
+        {
+            manager.trackedImagesChanged += OnImagesChanged;
+        }
+
+        private void OnDestroy()
+        {
+            StopAllCoroutines();
         }
 
         private IEnumerator ImgLoadingRoutine()
         {
             //TODO: move to config
-            yield return StartCoroutine(provider.LoadImageFromURL("https://mix-ar.ru/content/ios/marker.jpg"));
+            var url = "https://mix-ar.ru/content/ios/marker.jpg";
+            yield return StartCoroutine(WebUtils.LoadImageFromURL(url,
+                LoadOperationCallback));
         }
 
-        private void OnLoaded(Texture2D obj)
+        private void LoadOperationCallback(Texture2D texture2D)
         {
-            AddImage(obj);
+            if (texture2D == null)
+            {
+                Debug.Log("Texture couldn't be loaded");
+            }
+            else
+            {
+                Debug.Log("Texture is loaded");
+                AddImage(texture2D);
+            }
         }
 
-        void OnEnable()
-        {
-            manager.trackedImagesChanged += ImagesChanged;
-        }
-        private void OnDisable()
-        {
-            manager.trackedImagesChanged += ImagesChanged;
-        }
-        
         public void AddImage(Texture2D imageToAdd)
         {
             if (!DoesSupportMutableImageLibraries()) return;
-            
+
             if (manager.referenceLibrary is MutableRuntimeReferenceImageLibrary mutableLibrary)
             {
                 mutableLibrary.ScheduleAddImageWithValidationJob(
@@ -52,7 +66,7 @@ namespace Tracking
 
         private bool DoesSupportMutableImageLibraries() => manager.descriptor.supportsMutableLibrary;
 
-        private void ImagesChanged(ARTrackedImagesChangedEventArgs eventArgs)
+        private void OnImagesChanged(ARTrackedImagesChangedEventArgs eventArgs)
         {
             if (eventArgs.added.Count > 0)
             {
@@ -68,11 +82,10 @@ namespace Tracking
                 Debug.Log($"Updated {eventArgs.updated.Count}");
                 foreach (var trackedImage in eventArgs.updated)
                 {
-                    
                 }
             }
 
-            if (eventArgs.removed.Count >0)
+            if (eventArgs.removed.Count > 0)
                 Debug.Log($"Removed {eventArgs.removed.Count}");
         }
     }

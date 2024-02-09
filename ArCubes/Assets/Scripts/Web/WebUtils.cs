@@ -3,13 +3,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Network
+namespace Web
 {
-    public class ImageProvider : MonoBehaviour
+    public static class WebUtils
     {
-        public event Action<Texture2D> OnTextureLoaded;
-
-        public IEnumerator LoadImageFromURL(string url)
+        public static IEnumerator LoadImageFromURL(string url, Action<Texture2D> callback)
         {
             var www = UnityWebRequestTexture.GetTexture(url);
             yield return www.SendWebRequest();
@@ -17,17 +15,13 @@ namespace Network
             if (www.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogError(www.error);
+                callback.Invoke(null);
             }
             else
             {
                 var texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
-                FinishLoading(texture);
+                callback.Invoke(texture);
             }
-        }
-
-        private void FinishLoading(Texture2D texture)
-        {
-            OnTextureLoaded?.Invoke(texture);
         }
     }
 }
