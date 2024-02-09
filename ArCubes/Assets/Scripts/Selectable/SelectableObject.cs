@@ -10,7 +10,7 @@ namespace Selectable
         [SerializeField] private XRGrabInteractable interactable;
         [SerializeField] private SelectableVisuals visuals;
 
-        private const float SelectionTimeToDelete = 0.65f;
+        private const float SelectionTimeToDelete = 1f;
         private bool isDeletionTriggered;
         private float selectionTimer;
 

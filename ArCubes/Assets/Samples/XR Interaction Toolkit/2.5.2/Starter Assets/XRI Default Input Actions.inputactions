@@ -2523,6 +2523,39 @@
                     "isPartOfComposite": true
                 },
                 {
+                    "name": "One Modifier",
+                    "id": "a62ebaad-46cf-4a6d-8126-d6a9943c609b",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Drag Current Position",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "b68e475a-24ed-4ba4-9266-3499bc365ba6",
+                    "path": "<Touchscreen>/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Drag Current Position",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "3fcab226-7d0e-41cc-8b13-c5e3d04716e1",
+                    "path": "<Touchscreen>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Drag Current Position",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "",
                     "id": "40fc89b1-2773-4288-b02f-892fea9b7d48",
                     "path": "<TouchscreenGestureInputController>/twistDeltaRotation",
