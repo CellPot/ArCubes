@@ -780,8 +780,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SerializedLibrary: {fileID: 11400000, guid: 4c4b35d023d99a54e865295dbee46634,
     type: 2}
-  m_MaxNumberOfMovingImages: 2
-  m_TrackedImagePrefab: {fileID: 189158145842252206, guid: fb0a53fbab98ddd49a2a0e27efeb74f8,
+  m_MaxNumberOfMovingImages: 4
+  m_TrackedImagePrefab: {fileID: 3833428742536354134, guid: 128ee96056256e5468105ec94863a907,
     type: 3}
 --- !u!1 &1323550131
 GameObject:
@@ -1186,6 +1186,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1438332861}
   - component: {fileID: 1438332860}
+  - component: {fileID: 1438332862}
   m_Layer: 0
   m_Name: Management
   m_TagString: Untagged
@@ -1224,6 +1225,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1438332862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438332859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed0c4f2adcb06740ad50cf6ef8e0700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manager: {fileID: 1200317637}
+  library: {fileID: 11400000, guid: 4c4b35d023d99a54e865295dbee46634, type: 2}
+  prefab: {fileID: 189158145842252206, guid: fb0a53fbab98ddd49a2a0e27efeb74f8, type: 3}
+  tempImg: {fileID: 2800000, guid: 43a15230c53bf254dacd8c401731856b, type: 3}
 --- !u!1 &1702964717
 GameObject:
   m_ObjectHideFlags: 0
