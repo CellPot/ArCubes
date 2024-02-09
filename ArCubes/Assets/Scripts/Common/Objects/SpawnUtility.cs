@@ -1,28 +1,31 @@
 ﻿using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Utilities;
 
-public static class SpawnUtility
+namespace Common.Objects
 {
-    public static void PresetSpawnedActive(this GameObject newObject, Vector3 position, Vector3 normal)
+    public static class SpawnUtility
     {
-        newObject.transform.position = position;
-        BurstMathUtility.ProjectOnPlane(newObject.transform.forward, normal, out var projectedForward);
-        newObject.transform.rotation = Quaternion.LookRotation(projectedForward, normal);
-        newObject.SetActive(true);
-    }
+        public static void PresetSpawnedActive(this GameObject newObject, Vector3 position, Vector3 normal)
+        {
+            newObject.transform.position = position;
+            BurstMathUtility.ProjectOnPlane(newObject.transform.forward, normal, out var projectedForward);
+            newObject.transform.rotation = Quaternion.LookRotation(projectedForward, normal);
+            newObject.SetActive(true);
+        }
 
-    public static void PresetSpawnedNonActive(this GameObject newObject, Transform parent)
-    {
-        newObject.SetActive(false);
-        newObject.transform.SetParent(parent);
-    }
+        public static void PresetSpawnedNonActive(this GameObject newObject, Transform parent)
+        {
+            newObject.SetActive(false);
+            newObject.transform.SetParent(parent);
+        }
 
-    public static Vector2 GetRandomPointInAnnulus(Vector2 origin, float minRadius, float maxRadius)
-    {
-        var randomDirection = Random.insideUnitCircle.normalized;
-        var minRadius2 = minRadius * minRadius;
-        var maxRadius2 = maxRadius * maxRadius;
-        var randomDistance = Mathf.Sqrt(Random.value * (maxRadius2 - minRadius2) + minRadius2);
-        return origin + randomDirection * randomDistance;
+        public static Vector2 GetRandomPointInAnnulus(Vector2 origin, float minRadius, float maxRadius)
+        {
+            var randomDirection = Random.insideUnitCircle.normalized;
+            var minRadius2 = minRadius * minRadius;
+            var maxRadius2 = maxRadius * maxRadius;
+            var randomDistance = Mathf.Sqrt(Random.value * (maxRadius2 - minRadius2) + minRadius2);
+            return origin + randomDirection * randomDistance;
+        }
     }
 }
