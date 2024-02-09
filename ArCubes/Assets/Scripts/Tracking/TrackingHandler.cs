@@ -1,3 +1,5 @@
+using System.Collections;
+using Network;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -7,33 +9,42 @@ namespace Tracking
     public class TrackingHandler : MonoBehaviour
     {
         [SerializeField] private ARTrackedImageManager manager;
-        [SerializeField] private XRReferenceImageLibrary library;
+        [SerializeField] private ImageProvider provider;
         [SerializeField] private GameObject prefab;
-        [SerializeField] private Texture2D tempImg;
-        private AddReferenceImageJobState _job;
-        
+
+        private void Awake()
+        {
+            StartCoroutine(nameof(ImgLoadingRoutine));
+            provider.OnTextureLoaded += OnLoaded;
+        }
+
+        private IEnumerator ImgLoadingRoutine()
+        {
+            //TODO: move to config
+            yield return StartCoroutine(provider.LoadImageFromURL("https://mix-ar.ru/content/ios/marker.jpg"));
+        }
+
+        private void OnLoaded(Texture2D obj)
+        {
+            AddImage(obj);
+        }
+
         void OnEnable()
         {
             manager.trackedImagesChanged += ImagesChanged;
-            Invoke(nameof(TempLoadMethod),10f);
-        }
-
-        private void TempLoadMethod()
-        {
-            AddImage(tempImg);
         }
         private void OnDisable()
         {
             manager.trackedImagesChanged += ImagesChanged;
         }
         
-        private void AddImage(Texture2D imageToAdd)
+        public void AddImage(Texture2D imageToAdd)
         {
             if (!DoesSupportMutableImageLibraries()) return;
             
             if (manager.referenceLibrary is MutableRuntimeReferenceImageLibrary mutableLibrary)
             {
-                _job = mutableLibrary.ScheduleAddImageWithValidationJob(
+                mutableLibrary.ScheduleAddImageWithValidationJob(
                     imageToAdd,
                     "New Image", 0.1f);
             }
