@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Audio;
 using UI;
 using UnityEngine;
 
@@ -12,15 +13,17 @@ namespace Collectable
         [SerializeField] private int collectablesPerInteractable = 3;
 
         private UIHandler uiHandler;
+        private AudioHandler audioHandler;
         private ObjectPool<CollectableObject> objectsPool;
         private List<CollectableObject> activeObjects = new();
         private int score;
 
         public int CollectablesPerInteractable => collectablesPerInteractable;
 
-        public void Initialize(UIHandler handler)
+        public void Initialize(UIHandler uiHandler, AudioHandler audioHandler)
         {
-            uiHandler = handler;
+            this.uiHandler = uiHandler;
+            this.audioHandler = audioHandler;
             objectsPool = new ObjectPool<CollectableObject>(() =>
                 ObjectsFactory.Create(prefab, parentForSpawned), initialPoolSize);
         }
@@ -48,7 +51,7 @@ namespace Collectable
                 poolObject.gameObject.PresetSpawnedNonActive(parentForSpawned);
                 poolObject.OnDeletionTriggered -= DestroyPoolObject;
                 score++;
-                UpdateUI();
+                HandleCoinAddition();
             }
             else
             {
@@ -56,8 +59,9 @@ namespace Collectable
             }
         }
 
-        private void UpdateUI()
+        private void HandleCoinAddition()
         {
+            audioHandler.PlayCoinSound();
             uiHandler.SetScore(score);
         }
     }

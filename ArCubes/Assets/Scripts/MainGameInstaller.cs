@@ -1,3 +1,4 @@
+using Audio;
 using Collectable;
 using Selectable.Movement;
 using Tracking;
@@ -12,6 +13,7 @@ public class MainGameInstaller : MonoBehaviour
     [SerializeField] private CollectablesHandler collectablesHandler;
     [SerializeField] private ImageTrackingHandler imgTrackingHandler;
     [SerializeField] private SelectableMovementHandler movementHandler;
+    [SerializeField] private AudioHandler audioHandler;
 
     [SerializeField] private XRBaseControllerInteractor controllerInteractor;
     [SerializeField] private UIHandler uiHandler;
@@ -19,7 +21,7 @@ public class MainGameInstaller : MonoBehaviour
     private void Awake()
     {
         interactionHandler.Initialize(controllerInteractor, controllerInteractor as IARInteractor, uiHandler);
-        collectablesHandler.Initialize(uiHandler);
+        collectablesHandler.Initialize(uiHandler, audioHandler);
         objectsHandler.Initialize(interactionHandler, uiHandler, collectablesHandler);
         imgTrackingHandler.Initialize(movementHandler);
     }
