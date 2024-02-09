@@ -6,7 +6,7 @@ namespace UI
     {
         [SerializeField] private StickUI stickUI;
 
-        public bool IsInputFocusedOnUI => stickUI.gameObject.activeSelf && stickUI.IsInputFocusedOnElements;
+        public bool IsInputFocusedOnUI => stickUI.IsInputFocusedOnElements;
 
         private void Awake()
         {

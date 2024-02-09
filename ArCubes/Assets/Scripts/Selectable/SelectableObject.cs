@@ -34,6 +34,7 @@ namespace Selectable
             if (rBody == null)
                 rBody = GetComponent<Rigidbody>();
             interactable.selectEntered?.AddListener(OnSelectEntered);
+            interactable.selectExited?.AddListener(OnSelectExited);
         }
 
         private void Update()
@@ -61,9 +62,15 @@ namespace Selectable
             visuals.SwitchColor();
         }
 
+        private void OnSelectExited(SelectExitEventArgs selectExitEventArgs)
+        {
+            visuals.SwitchColor();
+        }
+
         private void OnDestroy()
         {
             interactable.selectEntered?.RemoveListener(OnSelectEntered);
+            interactable.selectExited?.RemoveListener(OnSelectExited);
         }
     }
 }
