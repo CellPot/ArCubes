@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace UI
@@ -5,6 +6,7 @@ namespace UI
     public class UIHandler : MonoBehaviour
     {
         [SerializeField] private StickUI stickUI;
+        [SerializeField] private TMP_Text scoreText;
 
         public bool IsInputFocusedOnUI => stickUI.IsInputFocusedOnElements;
 
@@ -16,6 +18,11 @@ namespace UI
         public void SetControlsActiveState(bool state)
         {
             stickUI.SetActiveState(state);
+        }
+
+        public void SetScore(int score)
+        {
+            scoreText.text = score.ToString();
         }
     }
 }

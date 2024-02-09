@@ -1,4 +1,5 @@
 using System.Collections;
+using Selectable.Movement;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -6,13 +7,19 @@ using Web;
 
 namespace Tracking
 {
-    public class TrackingHandler : MonoBehaviour
+    public class ImageTrackingHandler : MonoBehaviour
     {
         [SerializeField] private ARTrackedImageManager manager;
         [SerializeField] private GameObject prefab;
 
-        private void Awake()
+        private SelectableMovementHandler movementHandler;
+
+        //TODO: move to config
+        const string URL = "https://mix-ar.ru/content/ios/marker.jpg";
+
+        public void Initialize(SelectableMovementHandler movementHandler)
         {
+            this.movementHandler = movementHandler;
             StartCoroutine(nameof(ImgLoadingRoutine));
         }
 
@@ -33,26 +40,24 @@ namespace Tracking
 
         private IEnumerator ImgLoadingRoutine()
         {
-            //TODO: move to config
-            var url = "https://mix-ar.ru/content/ios/marker.jpg";
-            yield return StartCoroutine(WebUtils.LoadImageFromURL(url,
+            yield return StartCoroutine(WebUtils.LoadImageFromURL(URL,
                 LoadOperationCallback));
         }
 
         private void LoadOperationCallback(Texture2D texture2D)
         {
-            if (texture2D == null)
-            {
-                Debug.Log("Texture couldn't be loaded");
-            }
-            else
+            if (texture2D != null)
             {
                 Debug.Log("Texture is loaded");
                 AddImage(texture2D);
             }
+            else
+            {
+                Debug.Log("Texture couldn't be loaded");
+            }
         }
 
-        public void AddImage(Texture2D imageToAdd)
+        private void AddImage(Texture2D imageToAdd)
         {
             if (!DoesSupportMutableImageLibraries()) return;
 
@@ -60,7 +65,7 @@ namespace Tracking
             {
                 mutableLibrary.ScheduleAddImageWithValidationJob(
                     imageToAdd,
-                    "New Image", 0.1f);
+                    "Loaded Image", 0.1f);
             }
         }
 
@@ -70,23 +75,13 @@ namespace Tracking
         {
             if (eventArgs.added.Count > 0)
             {
-                Debug.Log($"Added {eventArgs.added.Count}");
                 foreach (var trackedImage in eventArgs.added)
                 {
                     Instantiate(prefab, trackedImage.transform);
                 }
-            }
 
-            if (eventArgs.updated.Count > 0)
-            {
-                Debug.Log($"Updated {eventArgs.updated.Count}");
-                foreach (var trackedImage in eventArgs.updated)
-                {
-                }
+                movementHandler.SetSpeedMod(2f);
             }
-
-            if (eventArgs.removed.Count > 0)
-                Debug.Log($"Removed {eventArgs.removed.Count}");
         }
     }
 }

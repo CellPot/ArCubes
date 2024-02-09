@@ -7,14 +7,21 @@ namespace Selectable.Movement
     {
         [SerializeField] private SpawnedObjectsHandler objectsHandler;
         [SerializeField] private InputActionReference actionReference;
-        [SerializeField] private float movementSpeed = 1f;
+        [SerializeField] private float initialSpeed = 1f;
 
+        private float movementSpeed = 1f;
         private Vector2 inputValue;
 
-        private void Start()
+        public void SetSpeedMod(float value)
+        {
+            movementSpeed = initialSpeed * value;
+        }
+
+        private void Awake()
         {
             actionReference.action.performed += OnInputPerformed;
             actionReference.action.canceled += OnInputCanceled;
+            SetSpeedMod(1);
         }
 
         private void OnDestroy()

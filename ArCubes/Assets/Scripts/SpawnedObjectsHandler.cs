@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Collectable;
 using Selectable;
 using UI;
 using UnityEngine;
@@ -14,19 +15,22 @@ public class SpawnedObjectsHandler : MonoBehaviour
 
     private IARHitProvider planeHitProvider;
     private UIHandler uiHandler;
+    private CollectablesHandler collectableHandler;
+
     private ObjectPool<SelectableObject> objectsPool;
     private List<SelectableObject> activeSelectables = new();
 
     public List<SelectableObject> ActiveSelectables => activeSelectables;
 
-    public void Initialize(IARHitProvider hitProvider, UIHandler handler)
+    public void Initialize(IARHitProvider hitProvider, UIHandler uiHandler, CollectablesHandler collectableHandler)
     {
         planeHitProvider = hitProvider;
-        uiHandler = handler;
+        this.uiHandler = uiHandler;
+        this.collectableHandler = collectableHandler;
 
         planeHitProvider.OnARRaycastHit += OnPlaneHitAction;
         objectsPool = new ObjectPool<SelectableObject>(() =>
-            SurfacedObjectsFactory.Create(selectablePrefab, parentForSpawned), initialPoolSize);
+            ObjectsFactory.Create(selectablePrefab, parentForSpawned), initialPoolSize);
     }
 
     public void OnDestroy()
@@ -41,15 +45,16 @@ public class SpawnedObjectsHandler : MonoBehaviour
             return;
 
         var newObject = GetNewObjectFromPool(hitInfo.pose.position, plane.normal);
+        activeSelectables.Add(newObject);
+        SpawnCollectables(newObject.transform.position);
         CheckActiveAmount();
     }
 
     private SelectableObject GetNewObjectFromPool(Vector3 position, Vector3 normal)
     {
         var newObject = objectsPool.GetObjectFromPool();
-        newObject.gameObject.PresetSelectableActive(position, normal);
+        newObject.gameObject.PresetSpawnedActive(position, normal);
         newObject.OnDeletionTriggered += DestroyPoolObject;
-        activeSelectables.Add(newObject);
         return newObject;
     }
 
@@ -57,7 +62,7 @@ public class SpawnedObjectsHandler : MonoBehaviour
     {
         if (activeSelectables.Contains(poolObject))
         {
-            poolObject.gameObject.PresetSelectableNonActive(parentForSpawned);
+            poolObject.gameObject.PresetSpawnedNonActive(parentForSpawned);
             poolObject.ResetState();
             poolObject.OnDeletionTriggered -= DestroyPoolObject;
             objectsPool.ReturnObjectToPool(poolObject);
@@ -69,6 +74,16 @@ public class SpawnedObjectsHandler : MonoBehaviour
         }
 
         CheckActiveAmount();
+    }
+
+    private void SpawnCollectables(Vector3 position)
+    {
+        for (var i = 0; i < collectableHandler.CollectablesPerInteractable; i++)
+        {
+            var point = SpawnUtility.GetRandomPointInAnnulus(new Vector2(position.x,
+                position.z), 1.5f, 3f);
+            collectableHandler.SpawnObject(new Vector3(point.x, position.y, point.y), Vector3.up);
+        }
     }
 
     private void CheckActiveAmount()

@@ -1,7 +1,7 @@
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public static class SurfacedObjectsFactory
+public static class ObjectsFactory
 {
     public static T Create<T>(T prefab, Transform parent) where T : MonoBehaviour
     {
