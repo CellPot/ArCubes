@@ -84,10 +84,14 @@ namespace Selectable
             }
         }
 
-        private void OnSelectEntered(SelectEnterEventArgs arg0) =>
+        private void OnSelectEntered(SelectEnterEventArgs arg0)
+        {
             visuals.SwitchColor();
+        }
 
-        private void OnSelectExited(SelectExitEventArgs selectExitEventArgs) =>
+        private void OnSelectExited(SelectExitEventArgs selectExitEventArgs)
+        {
             visuals.SwitchColor();
+        }
     }
 }

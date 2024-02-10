@@ -7,8 +7,9 @@ namespace UI
     {
         [SerializeField] private StickUI stickUI;
         [SerializeField] private TMP_Text scoreText;
+        [SerializeField] private CanvasHitDetector hitDetector;
 
-        public bool IsInputFocusedOnUI => stickUI.IsInputFocusedOnElements;
+        public bool IsInteractorOverUI => hitDetector.IsPointerOverUI();
 
         private void Awake()
         {

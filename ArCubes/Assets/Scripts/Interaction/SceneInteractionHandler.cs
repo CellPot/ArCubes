@@ -13,7 +13,7 @@ namespace Interaction
 
         private IARInteractor arInteractor;
         private bool hasFocusOnSelected;
-        private bool selectActivatedOnUI;
+        private bool isPointerOnUI;
 
         public event Action<ARRaycastHit> OnARRaycastHit;
 
@@ -27,7 +27,7 @@ namespace Interaction
 
         private void Update()
         {
-            var spawnConditionsMet = GetSpawnConditionCompliance();
+            var spawnConditionsMet = CheckSpawnConditionCompliance();
 
             if (spawnConditionsMet && arInteractor.TryGetCurrentARRaycastHit(out var raycastHit))
             {
@@ -35,13 +35,15 @@ namespace Interaction
             }
         }
 
-        private bool GetSpawnConditionCompliance()
+        private bool CheckSpawnConditionCompliance()
         {
+            isPointerOnUI = uiHandler.IsInteractorOverUI;
+            ExitSelectionOnUI(isPointerOnUI);
+
             var shouldSpawn = false;
             if (IsSelectActivatedThisFrame())
             {
                 hasFocusOnSelected = IsSelectionPresent();
-                selectActivatedOnUI = uiHandler.IsInputFocusedOnUI;
             }
             else if (IsSelectActionActive())
             {
@@ -49,11 +51,17 @@ namespace Interaction
             }
             else if (IsSelectDeactivatedThisFrame())
             {
-                shouldSpawn = !IsSelectionPresent() && !hasFocusOnSelected && !selectActivatedOnUI;
-                selectActivatedOnUI = false;
+                shouldSpawn = !IsSelectionPresent() && !hasFocusOnSelected && !isPointerOnUI;
             }
 
             return shouldSpawn;
+        }
+
+        private void ExitSelectionOnUI(bool pointerOnUI)
+        {
+            if (pointerOnUI && controllerInteractor.xrController.currentControllerState.selectInteractionState.active)
+                controllerInteractor.xrController.currentControllerState.selectInteractionState.deactivatedThisFrame =
+                    true;
         }
 
         private bool IsSelectActionActive() =>
