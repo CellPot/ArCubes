@@ -9,7 +9,9 @@ namespace Common.Objects
         {
             newObject.transform.position = position;
             BurstMathUtility.ProjectOnPlane(newObject.transform.forward, normal, out var projectedForward);
-            newObject.transform.rotation = Quaternion.LookRotation(projectedForward, normal);
+            newObject.transform.rotation = projectedForward != Vector3.zero
+                ? Quaternion.LookRotation(projectedForward, normal)
+                : Quaternion.identity;
             newObject.SetActive(true);
         }
 
