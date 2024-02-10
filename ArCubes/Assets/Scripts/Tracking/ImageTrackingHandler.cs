@@ -25,11 +25,11 @@ namespace Tracking
 
         private void StartImageLoading()
         {
-            var loadResult = DataIOUtils<WebData>.LoadFromJson(ApplicationPath.WebDataPath, out webData);
-            if (loadResult)
+            webData = DataIOUtils<WebData>.LoadFromJsonInResources(ApplicationPath.WebDataResourcesPath);
+            if (webData != null)
                 StartCoroutine(nameof(ImgLoadingRoutine));
             else
-                Debug.LogError("WebData path does not exist");
+                Debug.LogError("Could not retrieve WebData from json");
         }
 
         private void OnEnable()

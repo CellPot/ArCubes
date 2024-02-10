@@ -5,7 +5,14 @@ namespace Common.Data
 {
     public static class DataIOUtils<T>
     {
-        public static bool LoadFromJson(string path, out T data)
+        public static T LoadFromJsonInResources(string resourcesPath)
+        {
+            var jsonString = Resources.Load<TextAsset>(resourcesPath).text;
+            var data = JsonUtility.FromJson<T>(jsonString);
+            return data;
+        }
+
+        public static bool LoadFromJsonInStreaming(string path, out T data)
         {
             data = default(T);
             var filePath = Path.Combine(UnityEngine.Application.streamingAssetsPath, path);
@@ -19,7 +26,7 @@ namespace Common.Data
             return false;
         }
 
-        public static void WriteToJson(string path, T data)
+        public static void WriteToJsonInStreaming(string path, T data)
         {
             var jsonData = JsonUtility.ToJson(data, true);
             var filePath = Path.Combine(UnityEngine.Application.streamingAssetsPath, path);
