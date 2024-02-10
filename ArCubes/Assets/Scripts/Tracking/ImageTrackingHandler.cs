@@ -1,4 +1,6 @@
 using System.Collections;
+using Common.Application;
+using Common.Data;
 using Selectable.Movement;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
@@ -13,14 +15,21 @@ namespace Tracking
         [SerializeField] private GameObject prefab;
 
         private SelectableMovementHandler movementHandler;
-
-        //TODO: move to config
-        const string URL = "https://mix-ar.ru/content/ios/marker.jpg";
+        private WebData webData;
 
         public void Initialize(SelectableMovementHandler movementHandler)
         {
             this.movementHandler = movementHandler;
-            StartCoroutine(nameof(ImgLoadingRoutine));
+            StartImageLoading();
+        }
+
+        private void StartImageLoading()
+        {
+            var loadResult = DataIOUtils<WebData>.LoadFromJson(ApplicationPath.WebDataPath, out webData);
+            if (loadResult)
+                StartCoroutine(nameof(ImgLoadingRoutine));
+            else
+                Debug.LogError("WebData path does not exist");
         }
 
         private void OnEnable()
@@ -40,7 +49,10 @@ namespace Tracking
 
         private IEnumerator ImgLoadingRoutine()
         {
-            yield return StartCoroutine(WebUtils.LoadImageFromURL(URL,
+            if (webData == null)
+                yield break;
+
+            yield return StartCoroutine(WebUtils.LoadImageFromURL(webData.MarkerUrl,
                 LoadOperationCallback));
         }
 
@@ -76,12 +88,10 @@ namespace Tracking
             if (eventArgs.added.Count > 0)
             {
                 foreach (var trackedImage in eventArgs.added)
-                {
                     Instantiate(prefab, trackedImage.transform);
-                }
-
-                movementHandler.SetSpeedMod(2f);
             }
+
+            movementHandler.SetSpeedMod(manager.trackables.count > 0 ? 2f : 1f);
         }
     }
 }
